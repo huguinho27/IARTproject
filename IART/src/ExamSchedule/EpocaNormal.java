@@ -7,25 +7,29 @@ public class EpocaNormal {
 	ArrayList<Student> studentsToExam;
 	Calendar start;
 	Calendar end;
-	ArrayList<Calendar> workDays;
-	
+	ArrayList<Calendar> workDays = new ArrayList<Calendar>();
 	public EpocaNormal(Calendar start, Calendar end){
 		this.start = start;
 		this.end = end;
 		
-		while(this.start != this.end){
+		while(!this.start.equals(this.end)){
 			if (this.start.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || this.start.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
 				this.start.add(Calendar.DATE, 1);
 			}
 			else {
-				this.workDays.add(this.start);
+				Calendar wday = (Calendar) this.start.clone();
+				this.workDays.add(wday);
 				this.start.add(Calendar.DATE, 1);
 			}
 		}
 		if (this.end.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY && this.end.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY){
-			this.workDays.add(this.end);
+			this.workDays.add(this.workDays.size(), this.end);
 		}
 	};
+	
+	public EpocaNormal(ArrayList<Calendar> wd){
+		this.workDays = wd;
+	}
 	
 	public void setSubjects(ArrayList<Course> subjects){
 		this.subjects = subjects;
