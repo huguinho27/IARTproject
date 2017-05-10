@@ -3,11 +3,11 @@ package ExamSchedule;
 import java.util.*;
 
 public class EpocaNormal {
-	ArrayList<Course> subjects;
-	ArrayList<Student> studentsToExam;
-	Calendar start;
-	Calendar end;
-	ArrayList<Calendar> workDays = new ArrayList<Calendar>();
+	private ArrayList<Course> subjects;
+	private ArrayList<Student> studentsToExam;
+	private Calendar start;
+	private Calendar end;
+	private ArrayList<Calendar> workDays = new ArrayList<Calendar>();
 	public EpocaNormal(Calendar start, Calendar end){
 		this.start = start;
 		this.end = end;
@@ -61,6 +61,10 @@ public class EpocaNormal {
 	
 	public Calendar getEnd(){
 		return this.end;
+	}
+	
+	public ArrayList<Calendar> getWorkDays(){
+		return this.workDays;
 	}
 	
 }

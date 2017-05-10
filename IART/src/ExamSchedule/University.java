@@ -6,8 +6,10 @@ public class University {
 
 	private int studentID = 1000;
 	private int couseID = 100;
-	ArrayList<Course> courses;
-	ArrayList<Student> students;
+	private ArrayList<Course> courses = new ArrayList<Course>();
+	private ArrayList<Student> students = new ArrayList<Student>();
+	private EpocaNormal epocaNormal;
+	
 	
 	public University(){};
 	
@@ -31,4 +33,11 @@ public class University {
 		this.courses.add(c);
 	}
 	
+	public void setEpNormal(EpocaNormal epn){
+		this.epocaNormal = epn;
+	}
+	
+	public EpocaNormal getEpNormal(){
+		return this.epocaNormal;
+	}
 }

@@ -13,9 +13,10 @@ public class Main {
 		}*/
 		
 		University feup = new University();
+		feup.setEpNormal(epn);
 		
-		/*feup.newCourse("FIS1", 1);
-		/*feup.newCourse("MEST", 1);
+		feup.newCourse("FIS1", 1);
+		feup.newCourse("MEST", 1);
 		feup.newCourse("MPCP", 1);
 		feup.newCourse("PROG", 1);
 		feup.newCourse("BDAD", 2);
@@ -31,10 +32,13 @@ public class Main {
 		feup.newCourse("MNSE", 4);
 		feup.newCourse("SSIN", 4);
 		feup.newCourse("TBDA", 4);
-		feup.newCourse("TDIN", 4);*/
+		feup.newCourse("TDIN", 4);
+		
+		feup.getEpNormal().setSubjects(feup.getCourses());
 		
 		
-		System.out.println(epn.workDays.size());
+		System.out.println(feup.getEpNormal().getWorkDays().size());
+		System.out.println(feup.getCourses().size());
 		
 		
 
