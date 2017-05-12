@@ -37,11 +37,13 @@ public class Main {
 		feup.getEpNormal().setSubjects(feup.getCourses());
 		
 		
-		System.out.println(feup.getEpNormal().getWorkDays().size());
-		System.out.println(feup.getCourses().size());
-		
-		
-
+		//System.out.println(feup.getEpNormal().getWorkDays().size());
+		//System.out.println(feup.getCourses().size());
+		Chromosome cr = new Chromosome();
+		cr.setEpNormal(epn);
+		cr.fillChromosomeWithRandomGenes();
+		cr.printChromosome();
+	
 	}
 
 }
