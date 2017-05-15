@@ -8,16 +8,16 @@ public class Chromosome {
 	private ArrayList<Gene> genome = new ArrayList<Gene>();
 
 	//fitness
-	private int fitness;
+	private float fitness;
 	
 	private EpocaNormal epocaNormal;
 
 
 	//setters and getters
-	public int getFitness() {
+	public float getFitness() {
 		return fitness;
 	}
-	public void setFitness(int fitness) {
+	public void setFitness(float fitness) {
 		this.fitness = fitness;
 	}
 	public ArrayList<Gene> getGenome() {
@@ -50,7 +50,8 @@ public class Chromosome {
 	}
 	
 	public void calculateFitness(){
-		int fitness = 0;
+		float fitness = 0;
+		int numOfYears = 0;
 		/*for (int i = 0; i < genome.size() - 1; i++){
 			for (int j = i++; j < genome.size(); j++){
 				if (genome.get(i).getDayOfExam().equals(genome.get(j).getDayOfExam())){
@@ -68,8 +69,10 @@ public class Chromosome {
 			if (!year.isEmpty()){
 				year = this.sortByDate(year);
 				fitness += this.fitnessForYear(year);
+				numOfYears++;
 			}
 		}
+		fitness = fitness / numOfYears;
 		this.setFitness(fitness);
 	}
 
