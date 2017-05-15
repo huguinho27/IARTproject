@@ -42,6 +42,7 @@ public class Main {
 		Chromosome cr = new Chromosome();
 		cr.setEpNormal(epn);
 		cr.fillChromosomeWithRandomGenes();
+		cr.calculateFitness();
 		cr.printChromosome();
 	
 	}

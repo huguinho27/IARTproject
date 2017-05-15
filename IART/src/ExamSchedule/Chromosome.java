@@ -38,8 +38,6 @@ public class Chromosome {
 	 * Fills a chromosome with random genes. 
 	 * */	
 	public void fillChromosomeWithRandomGenes(){
-		System.out.println("Filling chromosome with random genes....");
-
 		ArrayList<Gene> tmpGenome = new ArrayList<Gene>();
 	
 		for (int i = 0; i < this.epocaNormal.getSubjects().size(); i++){
@@ -53,7 +51,7 @@ public class Chromosome {
 	
 	public void calculateFitness(){
 		int fitness = 0;
-		for (int i = 0; i < genome.size() - 1; i++){
+		/*for (int i = 0; i < genome.size() - 1; i++){
 			for (int j = i++; j < genome.size(); j++){
 				if (genome.get(i).getDayOfExam().equals(genome.get(j).getDayOfExam())){
 					for (Student student: genome.get(i).getSubject().getStudents()){
@@ -64,11 +62,11 @@ public class Chromosome {
 					}
 				}
 			}
-		}
+		}*/
 		ArrayList<ArrayList<Gene>> examsByYears = devideGenomeByYears();
 		for (ArrayList<Gene> year: examsByYears){
 			if (!year.isEmpty()){
-				this.sortByDate(year);
+				year = this.sortByDate(year);
 				fitness += this.fitnessForYear(year);
 			}
 		}
@@ -119,7 +117,7 @@ public class Chromosome {
 	public int fitnessForYear(ArrayList<Gene> year){
 		int result = 1;
 		for (int i = 0; i < year.size() - 1; i++){
-			long dif = (year.get(i++).getDayOfExam().getTimeInMillis() - year.get(i).getDayOfExam().getTimeInMillis()) / 86400000;
+			long dif = (year.get(i+1).getDayOfExam().getTimeInMillis() - year.get(i).getDayOfExam().getTimeInMillis()) / 86400000;
 			int diff = (int) (long) dif;
 			if (diff != 0) result *= diff;
 		}
