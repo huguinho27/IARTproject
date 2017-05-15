@@ -8,10 +8,9 @@ public class Chromosome {
 	private ArrayList<Gene> genome = new ArrayList<Gene>();
 
 	//fitness
-	private float fitness;
+	private float fitness = 0;
 	
 	private EpocaNormal epocaNormal;
-
 
 	//setters and getters
 	public float getFitness() {
@@ -125,6 +124,20 @@ public class Chromosome {
 			if (diff != 0) result *= diff;
 		}
 		return result;
+	}
+	
+	public Chromosome[] crossover(Chromosome parent){
+		Chromosome[] children = new Chromosome[2];
+		int crossPoint = Utilities.rand(1, genome.size()-1);
+		for (int i = 0; i < crossPoint; i++){
+			children[0].getGenome().add(this.getGenome().get(i));
+			children[1].getGenome().add(parent.getGenome().get(i));
+		}
+		for (int j = crossPoint; j < genome.size(); j++){
+			children[1].getGenome().add(this.getGenome().get(j));
+			children[0].getGenome().add(parent.getGenome().get(j));
+		}
+		return children;
 	}
 	
 	public void printChromosome(){
