@@ -1,50 +1,76 @@
 package ExamSchedule;
-import java.util.*;
 
-public class Main {
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
-	public static void main(String[] args) {
-		Calendar c1 = new GregorianCalendar(2017, 4, 29);
-		Calendar c2 = new GregorianCalendar(2017, 5, 30);
-		EpocaNormal epn = new EpocaNormal(c1, c2);
-		/*System.out.println("\n\n");
-		for (Calendar object: epn.workDays){
-			System.out.println(object.getTime());
-		}*/
+public class Main
+{
+
+	public static void main(String[] args) throws IOException // java <progName> <subjectsNameFile> <timeIntervalFile>
+	{
+		if (args.length != 3)
+		{
+			System.out.println("USAGE: java Main <subjectsNameFile> <timeIntervalFileName>");
+			System.exit(0);
+		}
+		ArrayList<Calendar> dates = new ArrayList<Calendar>();
+		ArrayList<Course> courses = new ArrayList<Course>();
+		String strLine;
+
+		// DATES
+		FileInputStream fstream = new FileInputStream(args[1]);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+		while ((strLine = br.readLine()) != null)
+		{
+			String[] initDate = strLine.split("-");
+			dates.add(new GregorianCalendar(Integer.parseInt(initDate[0]), Integer.parseInt(initDate[1]),
+					Integer.parseInt(initDate[2])));
+		}
+		// DATES END
+
+		// SUBJECTS FILE EXAMPLE: 0;FIS1,1;0-JOAO:1-ALEXANDRE
+		fstream = new FileInputStream(args[0]);
+		br = new BufferedReader(new InputStreamReader(fstream));
+		while ((strLine = br.readLine()) != null)
+		{
+			if (!strLine.isEmpty())
+			{
+
+				String[] initDate = strLine.split(";");
+				String[] studentsOnCourse = initDate[3].split(":");
+
+				Course c = new Course(Integer.parseInt(initDate[0]), initDate[1], Integer.parseInt(initDate[2]));
+				for (int i = 0; i < studentsOnCourse.length; i++)
+				{
+					String[] pairStudentId = studentsOnCourse[i].split("-");
+					c.addStudent(new Student(Integer.parseInt(pairStudentId[0]), pairStudentId[1]));
+				}
+			}
+
+		}
+		// SUBJECTS FILE END
+		br.close();
 		
+		EpocaNormal epn = new EpocaNormal(dates.get(0), dates.get(1));
 		University feup = new University();
 		feup.setEpNormal(epn);
 		
-		feup.newCourse("FIS1", 1);
-		feup.newCourse("MEST", 1);
-		feup.newCourse("MPCP", 1);
-		feup.newCourse("PROG", 1);
-		feup.newCourse("BDAD", 2);
-		feup.newCourse("CGRA", 2);
-		feup.newCourse("CAL", 2);
-		feup.newCourse("SOPE", 2);
-		feup.newCourse("IART", 3);
-		feup.newCourse("SDIS", 3);
-		feup.newCourse("CPAR", 4);
-		feup.newCourse("AGRS", 4);
-		feup.newCourse("CMO", 4);
-		feup.newCourse("MARK", 4);
-		feup.newCourse("MNSE", 4);
-		feup.newCourse("SSIN", 4);
-		feup.newCourse("TBDA", 4);
-		feup.newCourse("TDIN", 4);
-		
+		for (int i = 0; i < courses.size();i++)
+			feup.newCourse(courses.get(i).getName(), courses.get(i).getYear());
+
 		feup.getEpNormal().setSubjects(feup.getCourses());
-		
-		
-		//System.out.println(feup.getEpNormal().getWorkDays().size());
-		//System.out.println(feup.getCourses().size());
+
 		Chromosome cr = new Chromosome();
 		cr.setEpNormal(epn);
 		cr.fillChromosomeWithRandomGenes();
 		cr.calculateFitness();
 		cr.printChromosome();
-	
+
 	}
 
 }

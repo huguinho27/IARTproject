@@ -22,7 +22,7 @@ public class University {
 	}
 	
 	public void newStudent(String name, int year){
-		Student s = new Student(this.studentID, name, year);
+		Student s = new Student(this.studentID, name);
 		this.studentID++;
 		this.students.add(s);
 	}
