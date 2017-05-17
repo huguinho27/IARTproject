@@ -9,7 +9,7 @@ public class Chromosome {
 
 	//fitness
 	private float fitness = 0;
-	
+
 	private EpocaNormal epocaNormal;
 
 	//setters and getters
@@ -31,14 +31,23 @@ public class Chromosome {
 	public EpocaNormal getEpNormal(){
 		return this.epocaNormal;
 	}
+	
+	//TODO
+	public Chromosome[] changeGene(int bit)
+	{
+		Chromosome[] temp = new Chromosome[1];
+		//
+		
+		return temp;
+	}
 
 
 	/*
-	 * Fills a chromosome with random genes. 
-	 * */	
+	 * Fills a chromosome with random genes.
+	 * */
 	public void fillChromosomeWithRandomGenes(){
 		ArrayList<Gene> tmpGenome = new ArrayList<Gene>();
-	
+
 		for (int i = 0; i < this.epocaNormal.getSubjects().size(); i++){
 			int r = Utilities.rand(0, this.epocaNormal.getWorkDays().size() - 1);
 			Gene g = new Gene(this.epocaNormal.getSubjects().get(i), this.epocaNormal.getWorkDays().get(r));
@@ -47,7 +56,7 @@ public class Chromosome {
 		}
 		this.setGenome(tmpGenome);
 	}
-	
+
 	public void calculateFitness(){
 		float fitness = 0;
 		int numOfYears = 0;
@@ -81,9 +90,9 @@ public class Chromosome {
 		ArrayList<Gene> thirdYear = new ArrayList<Gene>();
 		ArrayList<Gene> fourthYear = new ArrayList<Gene>();
 		ArrayList<Gene> fifthYear = new ArrayList<Gene>();
-		
+
 		ArrayList<ArrayList<Gene>> allYears = new ArrayList<ArrayList<Gene>>();
-		
+
 		for (Gene exam: this.genome){
 			if (exam.getSubject().getYear() == 1) firstYear.add(exam);
 			else if (exam.getSubject().getYear() == 2) secondYear.add(exam);
@@ -96,10 +105,10 @@ public class Chromosome {
 		allYears.add(thirdYear);
 		allYears.add(fourthYear);
 		allYears.add(fifthYear);
-		
+
 		return allYears;
 	}
-	
+
 	public ArrayList<Gene> sortByDate(ArrayList<Gene> year){
 		ArrayList<Gene> newList = new ArrayList<Gene>();
 		while (!year.isEmpty()){
@@ -115,7 +124,7 @@ public class Chromosome {
 		}
 		return newList;
 	}
-	
+
 	public int fitnessForYear(ArrayList<Gene> year){
 		int result = 1;
 		for (int i = 0; i < year.size() - 1; i++){
@@ -125,21 +134,7 @@ public class Chromosome {
 		}
 		return result;
 	}
-	
-	public Chromosome[] crossover(Chromosome parent){
-		Chromosome[] children = new Chromosome[2];
-		int crossPoint = Utilities.rand(1, genome.size()-1);
-		for (int i = 0; i < crossPoint; i++){
-			children[0].getGenome().add(this.getGenome().get(i));
-			children[1].getGenome().add(parent.getGenome().get(i));
-		}
-		for (int j = crossPoint; j < genome.size(); j++){
-			children[1].getGenome().add(this.getGenome().get(j));
-			children[0].getGenome().add(parent.getGenome().get(j));
-		}
-		return children;
-	}
-	
+
 	public void printChromosome(){
 		System.out.println("Schedule:\n");
 		for (int i = 0; i < this.genome.size(); i++){
@@ -147,4 +142,5 @@ public class Chromosome {
 		}
 		System.out.println("Fitness = " + this.getFitness());
 	}
+
 }
