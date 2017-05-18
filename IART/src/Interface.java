@@ -1,4 +1,3 @@
-package ExamSchedule;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,11 +10,12 @@ public class Interface
 {
 	public static void main(String[] args) throws IOException // java Interface <subjectsNameFile> <timeIntervalFile>
 	{
-		if (args.length != 3)
+		if (args.length != 2)
 		{
 			System.out.println("USAGE: java Interface <subjectsNameFile> <timeIntervalFileName>");
 			System.exit(0);
 		}
+		
 		ArrayList<Calendar> dates = new ArrayList<Calendar>();
 		ArrayList<Course> courses = new ArrayList<Course>();
 		String strLine;
@@ -43,13 +43,13 @@ public class Interface
 				String[] studentsOnCourse = initDate[3].split(":");
 
 				Course c = new Course(Integer.parseInt(initDate[0]), initDate[1], Integer.parseInt(initDate[2]));
+				
 				for (int i = 0; i < studentsOnCourse.length; i++)
 				{
 					String[] pairStudentId = studentsOnCourse[i].split("-");
 					c.addStudent(new Student(Integer.parseInt(pairStudentId[0]), pairStudentId[1]));
 				}
 			}
-
 		}
 		// SUBJECTS FILE END
 		br.close();
