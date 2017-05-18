@@ -32,13 +32,10 @@ public class Chromosome {
 		return this.epocaNormal;
 	}
 	
-	//TODO
-	public Chromosome[] changeGene(int bit)
+	public void changeGene(int bit)
 	{
-		Chromosome[] temp = new Chromosome[1];
-		//
-		
-		return temp;
+		int r = Utilities.rand(0, this.epocaNormal.getWorkDays().size() - 1);
+		this.genome.get(bit).setDayOfExam(this.epocaNormal.getWorkDays().get(r));
 	}
 
 

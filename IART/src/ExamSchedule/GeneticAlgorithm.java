@@ -26,22 +26,34 @@ public class GeneticAlgorithm {
 		return children;
 	}
 	
-	public Chromosome[] mutations(Chromosome mutant, int bit)
+	public void mutations(int bit)
 	{
-		Chromosome[] children = new Chromosome[1];
-		int size = mutant.getGenome().size();
-		int count = 0;
+		int ind = chromosomesGenerated.size();
+		int size = chromosomesGenerated.get(0).getGenome().size();
+		int totalBits = ind * size;
+		int count;
 		
-		for (int i = bit; i>0; i++)
-		{
-			if (bit > size)
-			{
-				bit = bit-size;
-				count++;
-			}
+		if (bit > totalBits){
+			while (bit > totalBits) bit = bit - totalBits;
+			count = 1;
 		}
-		
-		return chromosomesGenerated.get(count).changeGene(bit);		
+		else{
+			count = totalBits / bit;
+		}
+
+		int chr = (bit-1) / size;
+		int g = (bit-1) % size;
+		chromosomesGenerated.get(chr).changeGene(g);
+		count--;
+		while (count > 0){
+			g = g + bit;
+			while (g >= size){
+				chr++;
+				g = g - size;
+			}
+			chromosomesGenerated.get(chr).changeGene(g);
+			count--;
+		}	
 	}
 	
 	public ArrayList<Chromosome> selectNextGenerationChromosome(ArrayList<Chromosome> chromosomes)
