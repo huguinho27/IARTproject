@@ -1,7 +1,14 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 
 public class GeneticAlgorithm {
+	
+	public GeneticAlgorithm ()
+	{
+		
+	}
 	
 	private ArrayList<Chromosome> chromosomesGenerated;
 	
@@ -52,7 +59,7 @@ public class GeneticAlgorithm {
 		}	
 	}
 	
-	public ArrayList<Chromosome> selectNextGenerationChromosome(ArrayList<Chromosome> chromosomes)
+	public ArrayList<Chromosome> selectNextGenerationElite(ArrayList<Chromosome> chromosomes)
 	{
 		int j = 0;
 		ArrayList<Chromosome> ordered = new ArrayList<Chromosome>();
@@ -64,6 +71,61 @@ public class GeneticAlgorithm {
 		}
 
 		return ordered;
+	}
+	
+	public ArrayList<Chromosome> selectNextGenerationProbabilistic(ArrayList<Chromosome> chromosomes)
+	{
+		//Calculate Fa/Ftotal of each chromosome
+		int countTotalFitness = 0;
+		ArrayList<Double> chromosomesProbability = new ArrayList<Double>();
+		
+		for (int i=0; i< chromosomesGenerated.size(); i++)
+		{
+			countTotalFitness += chromosomesGenerated.get(i).getFitness();
+		}
+		
+		for (int i=0; i < chromosomesGenerated.size(); i++)
+		{
+			double prob = chromosomesGenerated.get(i).getFitness();
+			chromosomesProbability.add(prob/countTotalFitness);
+		}
+		
+		//Roulette Generated
+		Random r = new Random();
+		double start = r.nextDouble();
+		double end = r.nextDouble();
+		
+		if (start > end)
+		{
+			double temp = end;
+			end = start;
+			start = temp;
+		}
+		
+		//Selection
+		double intervalo = 0.0;
+		
+		Collections.sort(chromosomesProbability);
+		ArrayList<Double> sequenceProbability = new ArrayList<Double>();
+		
+		double count = chromosomesProbability.get(0);
+		
+		for (int i=0; i<(chromosomesProbability.size()-1); i++)
+		{
+			count += chromosomesProbability.get(i);
+			sequenceProbability.add(count);
+		}
+		
+		ArrayList<Chromosome> selectedChromosomes = new ArrayList<Chromosome>();
+		
+		for (int i=0; i<sequenceProbability.size();i++)
+		{
+			if (sequenceProbability.get(i)>start && sequenceProbability.get(i)<end)
+				selectedChromosomes.add(chromosomesGenerated.get(i));
+		}
+		
+		return selectedChromosomes;
+		
 	}
 
 	public int maxFitness (ArrayList<Chromosome> chromosomes)
