@@ -49,6 +49,7 @@ public class Interface
 					String[] pairStudentId = studentsOnCourse[i].split("-");
 					c.addStudent(new Student(Integer.parseInt(pairStudentId[0]), pairStudentId[1]));
 				}
+				courses.add(c);
 			}
 		}
 		// SUBJECTS FILE END
@@ -61,13 +62,11 @@ public class Interface
 		for (int i = 0; i < courses.size();i++)
 			feup.newCourse(courses.get(i).getName(), courses.get(i).getYear());
 
-		feup.getEpNormal().setSubjects(feup.getCourses());
+		feup.SetEpocaNormalSubjects(courses);
 
 		Chromosome cr = new Chromosome();
 		cr.setEpNormal(epn);
 		cr.fillChromosomeWithRandomGenes();
-		cr.calculateFitness();
 		cr.printChromosome();
 	}
-
 }
