@@ -10,21 +10,26 @@ public class GeneticAlgorithm {
 		
 	}
 	
-	private ArrayList<Chromosome> chromosomesGenerated;
+	private ArrayList<Chromosome> chromosomesGenerated = new ArrayList<Chromosome>();
+	private ArrayList<Chromosome> initialPopulation;
 	
 	private double crossoverprobability = 0;
 
 	public Chromosome[] crossover(Chromosome parent1, Chromosome parent2){
 		Chromosome[] children = new Chromosome[2];
 		int crossPoint = Utilities.rand(1, parent1.getGenome().size()-1);
+		Chromosome child1 = new Chromosome();
+		Chromosome child2 = new Chromosome();
 		for (int i = 0; i < crossPoint; i++){
-			children[0].getGenome().add(parent1.getGenome().get(i));
-			children[1].getGenome().add(parent2.getGenome().get(i));
+			child1.addGene(parent1.getGenome().get(i));
+			child2.addGene(parent2.getGenome().get(i));
 		}
 		for (int j = crossPoint; j < parent1.getGenome().size(); j++){
-			children[1].getGenome().add(parent1.getGenome().get(j));
-			children[0].getGenome().add(parent2.getGenome().get(j));
+			child2.addGene(parent1.getGenome().get(j));
+			child1.addGene(parent2.getGenome().get(j));
 		}
+		children[0] = (Chromosome) child1.clone();
+		children[1] = (Chromosome) child2.clone();
 
 		return children;
 	}
@@ -59,15 +64,16 @@ public class GeneticAlgorithm {
 		}	
 	}
 	
-	public ArrayList<Chromosome> selectNextGenerationElite(ArrayList<Chromosome> chromosomes)
+	public ArrayList<Chromosome> selectNextGenerationElite(ArrayList<Chromosome> chromosomes, int num)
 	{
 		int j = 0;
 		ArrayList<Chromosome> ordered = new ArrayList<Chromosome>();
 
-		for (int i=0; i<10; i++)
+		for (int i=0; i<num; i++)
 		{
 			j = maxFitness(chromosomes);
 			ordered.add(chromosomes.get(j));
+			chromosomes.remove(j);
 		}
 
 		return ordered;
@@ -79,14 +85,15 @@ public class GeneticAlgorithm {
 		int countTotalFitness = 0;
 		ArrayList<Double> chromosomesProbability = new ArrayList<Double>();
 		
-		for (int i=0; i< chromosomesGenerated.size(); i++)
+		for (int i=0; i< chromosomes.size(); i++)
 		{
-			countTotalFitness += chromosomesGenerated.get(i).getFitness();
+			countTotalFitness += chromosomes.get(i).getFitness();
 		}
 		
-		for (int i=0; i < chromosomesGenerated.size(); i++)
+		for (int i=0; i < chromosomes.size(); i++)
 		{
-			double prob = chromosomesGenerated.get(i).getFitness();
+			//i think we have to use clone() here
+			double prob = chromosomes.get(i).getFitness();
 			chromosomesProbability.add(prob/countTotalFitness);
 		}
 		
@@ -121,7 +128,7 @@ public class GeneticAlgorithm {
 		for (int i=0; i<sequenceProbability.size();i++)
 		{
 			if (sequenceProbability.get(i)>start && sequenceProbability.get(i)<end)
-				selectedChromosomes.add(chromosomesGenerated.get(i));
+				selectedChromosomes.add(chromosomes.get(i));
 		}
 		
 		return selectedChromosomes;
@@ -137,8 +144,6 @@ public class GeneticAlgorithm {
 				temp = i;
 		}
 
-		chromosomes.remove(temp);
-
 		return temp;
 	}
 	
@@ -146,10 +151,92 @@ public class GeneticAlgorithm {
 	{
 		crossoverprobability = value;
 	}
-	
-	public void run()
+
+	public Chromosome run(EpocaNormal epn, int populationSize, int mutationBit, int numIterations)
 	{
+		//create initial population
+		System.out.println("create initial population");
 		
+		this.initialPopulation = new ArrayList<Chromosome>();
+		for (int i = 0; i < populationSize; i++){
+			Chromosome tmp = new Chromosome();
+			tmp.setEpNormal(epn);
+			tmp.fillChromosomeWithRandomGenes();
+			initialPopulation.add(tmp);
+		}
+		//calculate fitness
+		System.out.println("calculate fitness");
+		
+		for (Chromosome individual: initialPopulation){
+			individual.calculateFitness();
+		}
+		int iter = 0;
+		int parentSize = populationSize / 2;
+		while (iter < numIterations){
+			//select parents by probabilistic + elite
+			System.out.println("select parents by probabilistic + elite");
+			System.out.println(initialPopulation.size());
+			
+			ArrayList<Chromosome> parents = selectNextGenerationProbabilistic(initialPopulation);
+			if (parents.size() > parentSize){
+				parents = selectNextGenerationElite(parents, parentSize);
+			}
+			//select parents by elite
+			else{
+				System.out.println("select parents by elite");
+				
+				int rest = parentSize - parents.size();
+				if (rest > 0){
+					ArrayList<Chromosome> restParents = selectNextGenerationElite(initialPopulation, rest);
+					parents.addAll(restParents);
+				}
+			}
+			
+			//create pairs
+			System.out.println("create pairs");
+			
+			int[][] pairs = new int[parentSize][2];
+			for (int i = 0; i < parentSize; i++){
+				int firstParent = Utilities.rand(0, parentSize - 1);
+				int secondParent;
+				do{
+					secondParent = Utilities.rand(0, parentSize - 1);
+
+				}while (firstParent == secondParent);
+				pairs[i][0] = firstParent;
+				pairs[i][1] = secondParent;
+			}
+			
+			/*for (int i = 0; i < parentSize; i++){
+				System.out.println("pair " + i + ": parent1 - " + pairs[i][0] + ", parent2 - " + pairs[i][1]);
+			}*/
+			//crossover
+			System.out.println("crossover");
+			
+			for (int i = 0; i < parentSize; i++){
+				Chromosome[] children = crossover(parents.get(pairs[i][0]), parents.get(pairs[i][1]));
+				this.chromosomesGenerated.add(children[0]);
+				this.chromosomesGenerated.add(children[1]);
+			}
+			
+			for (int i = 0; i < chromosomesGenerated.size(); i++){
+				chromosomesGenerated.get(i).setEpNormal(epn);
+			}
+			//mutation
+			System.out.println("mutation");
+			
+			mutations(mutationBit);
+			//set new initial population
+			System.out.println("set new initial population");
+			
+			this.initialPopulation = new ArrayList<Chromosome>();
+			for (int i = 0; i < chromosomesGenerated.size(); i++){
+				Chromosome tmp = (Chromosome) chromosomesGenerated.get(i).clone();
+				this.initialPopulation.add(tmp);
+			}
+			iter++;
+		}
+		return chromosomesGenerated.get(maxFitness(chromosomesGenerated));
 	}
 
 }

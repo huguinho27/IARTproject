@@ -1,8 +1,8 @@
 import java.util.*;
 
-public class Chromosome
+public class Chromosome implements Cloneable
 {
-	private ArrayList<Gene> genome;
+	private ArrayList<Gene> genome = new ArrayList<Gene>();
 	private float fitness;
 	private EpocaNormal epocaNormal;
 
@@ -10,6 +10,20 @@ public class Chromosome
 	{
 		genome = new ArrayList<Gene>();
 		fitness = 0;
+	}
+	
+	public void addGene(Gene g){
+		this.genome.add(g);
+	}
+	
+	@Override
+	protected Chromosome clone()
+	{
+		Chromosome tmp = new Chromosome();
+		tmp.setGenome(genome);
+		tmp.setFitness(fitness);
+		tmp.setEpNormal(epocaNormal);
+		return tmp;
 	}
 
 	// setters and getters
@@ -70,14 +84,20 @@ public class Chromosome
 	{
 		float fitness = 0;
 		int numOfYears = 0;
-		/*
-		 * for (int i = 0; i < genome.size() - 1; i++){ for (int j = i++; j <
-		 * genome.size(); j++){ if
-		 * (genome.get(i).getDayOfExam().equals(genome.get(j).getDayOfExam())){
-		 * for (Student student: genome.get(i).getSubject().getStudents()){ if
-		 * (genome.get(j).getSubject().getStudents().contains(student)){
-		 * this.setFitness(0); return; } } } } }
-		 */
+
+		for (int i = 0; i < genome.size() - 1; i++) {
+			for (int j = i++; j < genome.size(); j++) {
+				if (genome.get(i).getDayOfExam().equals(genome.get(j).getDayOfExam())) {
+					for (Student student: genome.get(i).getSubject().getStudents()) {
+						if (genome.get(j).getSubject().getStudents().contains(student)) {
+							this.setFitness(0); 
+							return;
+							} 
+						} 
+					} 
+				} 
+			}
+
 		ArrayList<ArrayList<Gene>> examsByYears = devideGenomeByYears();
 		for (ArrayList<Gene> year : examsByYears)
 		{

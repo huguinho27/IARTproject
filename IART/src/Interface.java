@@ -64,9 +64,14 @@ public class Interface
 
 		feup.SetEpocaNormalSubjects(courses);
 
-		Chromosome cr = new Chromosome();
+		//Chromosome run(EpocaNormal epn, int populationSize, int mutationBit, int numIterations)
+		GeneticAlgorithm ga = new GeneticAlgorithm();
+		Chromosome result = ga.run(epn, 20, 8, 5);
+		result.printChromosome();
+
+		/*Chromosome cr = new Chromosome();
 		cr.setEpNormal(epn);
 		cr.fillChromosomeWithRandomGenes();
-		cr.printChromosome();
+		cr.printChromosome();*/
 	}
 }

@@ -18,6 +18,10 @@ public class Gene implements Cloneable
 		return new Gene(exam, dayOfExam);
 	}
 
+	public void printGene(){
+		System.out.println(exam.getName() + " - " + dayOfExam.getTime());
+	}
+	
 	public Course getSubject()
 	{
 		return this.exam;
