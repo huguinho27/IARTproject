@@ -24,4 +24,9 @@ public class Student
 	{
 		this.stName = name;
 	}
+
+	public boolean equals(Object t2)
+	{ 
+		return t2 != null && t2 instanceof Student && this.studentID == ((Student)t2).studentID;
+	} 
 }

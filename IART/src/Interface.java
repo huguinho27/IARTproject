@@ -66,7 +66,8 @@ public class Interface
 
 		//Chromosome run(EpocaNormal epn, int populationSize, int mutationBit, int numIterations)
 		GeneticAlgorithm ga = new GeneticAlgorithm();
-		Chromosome result = ga.run(epn, 20, 8, 5);
+		//Chromosome result = ga.runProbabilistic(epn, 4, 8, 2);
+		Chromosome result = ga.runElite(epn, 50, 8, 100);
 		result.printChromosome();
 
 		/*Chromosome cr = new Chromosome();

@@ -86,17 +86,22 @@ public class Chromosome implements Cloneable
 		int numOfYears = 0;
 
 		for (int i = 0; i < genome.size() - 1; i++) {
-			for (int j = i++; j < genome.size(); j++) {
+			for (int j = i+1; j < genome.size(); j++) {
 				if (genome.get(i).getDayOfExam().equals(genome.get(j).getDayOfExam())) {
-					for (Student student: genome.get(i).getSubject().getStudents()) {
-						if (genome.get(j).getSubject().getStudents().contains(student)) {
+					System.out.println("equal dates");
+
+					for (int s = 0; s < genome.get(i).getSubject().getStudents().size(); s++){
+						Student st = genome.get(i).getSubject().getStudents().get(s);
+						//System.out.println("Check student: " + st.getID() + " - " + st.getName());
+						if (genome.get(j).getSubject().getStudents().contains(st)){
+							System.out.println("Problem student: " + st.getID() + " - " + st.getName());
 							this.setFitness(0); 
 							return;
-							} 
-						} 
-					} 
+						}
+					}
 				} 
-			}
+			} 
+		}
 
 		ArrayList<ArrayList<Gene>> examsByYears = devideGenomeByYears();
 		for (ArrayList<Gene> year : examsByYears)
