@@ -144,28 +144,30 @@ public class Interface
 		int elitistOrProb = 0, initialPopSize = 0, mutationBit = 0, numIt = 0;
 		Console console = System.console();
 
-		while (true)
-		{
-			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
-			System.out.println("How do you want to run algorithm");
-			System.out.println("1. Elitist solution");
-			System.out.println("2. Elitist + Probabilistic Solutions");
-			System.out.println("0 - Back to Main Menu");
-
-			String line = console.readLine();
-			elitistOrProb = Integer.parseInt(line);
-
-			switch (elitistOrProb)
+		if (compare != 3){
+			while (true)
 			{
-			case 0:
-			{
-				MainMenu();
-				break;
+				System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
+				System.out.println("How do you want to run algorithm");
+				System.out.println("1. Elitist solution");
+				System.out.println("2. Elitist + Probabilistic Solutions");
+				System.out.println("0 - Back to Main Menu");
+
+				String line = console.readLine();
+				elitistOrProb = Integer.parseInt(line);
+
+				switch (elitistOrProb)
+				{
+				case 0:
+				{
+					MainMenu();
+					break;
+				}
+				}
+				System.out.println("elitistOrProb : " + elitistOrProb);
+				if (elitistOrProb == 1 || elitistOrProb == 2)
+					break;
 			}
-			}
-			System.out.println("elitistOrProb : " + elitistOrProb);
-			if (elitistOrProb == 1 || elitistOrProb == 2)
-				break;
 		}
 		
 		while (true)
@@ -238,7 +240,7 @@ public class Interface
 			runGA(elitistOrProb, initialPopSize, mutationBit, numIt);
 		}
 		else if (compare == 3){
-			//TODO compare(initialPopSize, mutationBit, numIt);
+			compare(initialPopSize, mutationBit, numIt);
 		}
 	}
 
@@ -259,11 +261,10 @@ public class Interface
 			result = ga.runElite(epn, initPopSize, mutationBit, numIt);
 		}
 		else if (elitisOrProb == 2){
-			System.out.println("HERE!");
 			result = ga.runProbabilistic(epn, initPopSize, mutationBit, numIt);
 		}
-		result.printChromosome();
 		lastResult = (Chromosome) result.clone();
+		result.printChromosome();
 		ga.printStatistics();
 	}
 	

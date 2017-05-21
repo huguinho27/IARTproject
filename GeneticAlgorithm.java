@@ -159,7 +159,6 @@ public class GeneticAlgorithm {
 	public Chromosome runProbabilistic(EpocaNormal epn, int populationSize, int mutationBit, int numIterations)
 	{
 		//create initial population
-		System.out.println("initial");
 		this.initialPopulation = new ArrayList<Chromosome>();
 		for (int i = 0; i < populationSize; i++){
 			Chromosome tmp = new Chromosome();
@@ -168,7 +167,6 @@ public class GeneticAlgorithm {
 			initialPopulation.add(tmp);
 		}
 		//calculate fitness	
-		System.out.println("fitness");
 		for (Chromosome individual: initialPopulation){
 			individual.calculateFitness();
 		}
@@ -183,7 +181,7 @@ public class GeneticAlgorithm {
 				BestF = best.getFitness();
 				resultIter = iter;
 			}
-			//select parents by probabilistic + elite			
+			//select parents by probabilistic + elite
 			ArrayList<Chromosome> parents = selectNextGenerationProbabilistic(initialPopulation);
 			if (parents.size() > parentSize){
 				parents = selectNextGenerationElite(parents, parentSize);
@@ -237,7 +235,10 @@ public class GeneticAlgorithm {
 				initialPopulation.remove(minFitness(initialPopulation));
 				initialPopulation.add(best);
 			}
+			iter++;
 		}
+
+		this.createdProb = createdProb / numIterations;
 		return initialPopulation.get(maxFitness(initialPopulation));
 	}
 
@@ -256,12 +257,17 @@ public class GeneticAlgorithm {
 			individual.calculateFitness();
 		}
 		int iter = 0;
+		float BestF = 0; 
 		int parentSize = populationSize / 2;
 		while (iter < numIterations){
 			chromosomesGenerated = new ArrayList<Chromosome>();
 
 			//save best individual
 			Chromosome best = (Chromosome) initialPopulation.get(maxFitness(initialPopulation)).clone();
+			if (best.getFitness() > BestF){
+				BestF = best.getFitness();
+				resultIter = iter;
+			}
 			//select parents by elite
 			ArrayList<Chromosome> parents = selectNextGenerationElite(initialPopulation, parentSize);
 			//create pairs			
@@ -305,7 +311,6 @@ public class GeneticAlgorithm {
 			}
 			iter++;
 		}
-		this.createdProb = createdProb / numIterations;
 		return initialPopulation.get(maxFitness(initialPopulation));
 	}
 	
