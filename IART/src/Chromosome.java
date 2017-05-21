@@ -21,7 +21,12 @@ public class Chromosome implements Cloneable
 	protected Chromosome clone()
 	{
 		Chromosome tmp = new Chromosome();
-		tmp.setGenome(genome);
+		ArrayList<Gene> newG = new ArrayList<Gene>();
+		for (int i = 0; i < genome.size(); i++){
+			Gene g = (Gene) genome.get(i).clone();
+			newG.add(g);
+		}
+		tmp.setGenome(newG);
 		tmp.setFitness(fitness);
 		tmp.setEpNormal(epocaNormal);
 		return tmp;
@@ -199,25 +204,30 @@ public class Chromosome implements Cloneable
 		}
 		System.out.println("Fitness = " + this.getFitness());
 	}
-	
+
 	public void scheduleForStudent (int studentID){
-		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMMM/yyyy");
+		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMM yyyy");
 		ArrayList<Gene> schedule = new ArrayList<Gene>();
 		Student st = new Student(studentID, "");
 		for (int i = 0; i < this.genome.size(); i++){
+			/*for (int j = 0; j < this.getGenome().get(i).getSubject().getStudents().size(); j++){
+				if (this.getGenome().get(i).getSubject().getStudents().get(j).getID() == studentID){
+					schedule.add(genome.get(i));
+				}
+			}*/
 			if (genome.get(i).getSubject().getStudents().contains(st)){
 				schedule.add(genome.get(i));
 			}
 		}
 		ArrayList<Gene> ordered = sortByDate(schedule);
 		System.out.println("Schedule for student ID " + studentID + "\n");
-		for (int i = 0; i < ordered.size(); i++)
+		for (int s = 0; s < ordered.size(); s++)
 		{
-			System.out.println(DATE_FORMAT.format(ordered.get(i).getDayOfExam().getTime())
-					+ " - " + ordered.get(i).getSubject().getName());
+			System.out.println(DATE_FORMAT.format(ordered.get(s).getDayOfExam().getTime())
+					+ " - " + ordered.get(s).getSubject().getName());
 		}
 	}
-	
+
 	public void printCompare(Chromosome chr)
 	{
 		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
