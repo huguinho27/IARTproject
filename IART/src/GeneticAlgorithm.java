@@ -338,5 +338,4 @@ public class GeneticAlgorithm {
 		}
 		return initialPopulation.get(maxFitness(initialPopulation));
 	}
-
 }

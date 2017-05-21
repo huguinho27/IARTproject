@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Scanner;
 
 public class Interface
 {
@@ -13,12 +15,13 @@ public class Interface
 	ArrayList<Calendar> dates;
 	ArrayList<Course> courses;
 
-	public Interface(String subjectsFileName, String timeIntervalFile)
+	public Interface(String subjectsFileName, String timeIntervalFile) throws NumberFormatException, IOException
 	{
 		this.subjectsFileName = subjectsFileName;
 		this.timeIntervalFile = timeIntervalFile;
 		courses = new ArrayList<Course>();
 		dates = new ArrayList<Calendar>();
+		readInfoFromFiles();
 	}
 
 	public void readInfoFromFiles() throws NumberFormatException, IOException
@@ -31,8 +34,7 @@ public class Interface
 		while ((strLine = br.readLine()) != null)
 		{
 			String[] initDate = strLine.split("-");
-			dates.add(new GregorianCalendar(Integer.parseInt(initDate[0]), Integer.parseInt(initDate[1]),
-					Integer.parseInt(initDate[2])));
+			dates.add(new GregorianCalendar(Integer.parseInt(initDate[0]), Integer.parseInt(initDate[1])-1, Integer.parseInt(initDate[2])));
 		}
 		// DATES END
 
@@ -61,26 +63,156 @@ public class Interface
 		br.close();
 	}
 
-	public void MainMenu()
+	public void MainMenu() throws IOException
 	{
 		int option = 0;
-		while (option != 5)
+		Console console = System.console();
+
+		while (true)
 		{
 			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
 			System.out.println("1. Run Genetic Algorithm");
 			System.out.println("2. Show schedule for one student");
 			System.out.println("3. Compare both Genetic Algorithm Solutions");
 			System.out.println("0 - Exit");
-		}
 
+			String line = console.readLine();
+			option = Integer.parseInt(line);
+
+			switch (option)
+			{
+			case 1:
+			case 3:
+			{
+				runAlgorithmMenu(option);
+				break;
+			}
+			case 2:
+			{
+				ShowStudentScheduleMenu();
+				break;
+			}
+			case 0:
+			{
+				System.exit(0);
+				break;
+			}
+			default:
+				continue;
+			}
+		}
 	}
 	
-	public void runAlgorithmMenu(int option)
+	public void ShowStudentScheduleMenu() throws IOException
 	{
+		int studentId = 0;
+		Console console = System.console();
 		
+		while (true)
+		{
+			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
+			System.out.println("Please insert the ID of the student you want to show schedule (0 to back to Main Menu)");
+			System.out.println(">> ");
+
+			String line = console.readLine();
+			studentId = Integer.parseInt(line);
+
+			switch (studentId)
+			{
+			case 0:
+			{
+				MainMenu();
+				break;
+			}
+			}
+			
+			if (studentId != 0)
+				break;
+		}
+		
+		//TODO: showStudent(studentId);
 	}
-	
-	public void runGA()
+
+	public void runAlgorithmMenu(int compare) throws IOException
+	{
+		//if (compare == 3)
+			//TODO: COMPARE
+		int elitistOrProb = 0, initialPopSize = 0, mutationBit = 0;
+		Console console = System.console();
+
+		while (true)
+		{
+			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
+			System.out.println("How do you want to run algorithm");
+			System.out.println("1. Elitist solution");
+			System.out.println("2. Elitist + Probabilistic Solutions");
+			System.out.println("0 - Back to Main Menu");
+
+			String line = console.readLine();
+			elitistOrProb = Integer.parseInt(line);
+
+			switch (elitistOrProb)
+			{
+			case 0:
+			{
+				MainMenu();
+				break;
+			}
+			}
+			System.out.println("elitistOrProb : " + elitistOrProb);
+			if (elitistOrProb == 1 || elitistOrProb == 2)
+				break;
+		}
+		
+		while (true)
+		{
+			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
+			System.out.println("What should be the size of the initial population (0 to back to Main Menu)");
+			System.out.println(">> ");
+
+			String line = console.readLine();
+			initialPopSize = Integer.parseInt(line);
+
+			switch (initialPopSize)
+			{
+			case 0:
+			{
+				MainMenu();
+				break;
+			}
+			}
+			
+			if (initialPopSize > 0)
+				break;
+		}
+		
+		while (true)
+		{
+			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
+			System.out.println("What should be the bit to mutate? (0 to back to Main Menu)");
+			System.out.println(">> ");
+
+			String line = console.readLine();
+			mutationBit = Integer.parseInt(line);
+
+			switch (mutationBit)
+			{
+			case 0:
+			{
+				MainMenu();
+				break;
+			}
+			}
+			
+			if (mutationBit != 0)
+				break;
+		}
+		
+		runGA(elitistOrProb, initialPopSize, mutationBit);
+		//statistics...
+	}
+
+	public void runGA(int elitisOrProb, int initPopSize, int mutationBit)
 	{
 		EpocaNormal epn = new EpocaNormal(dates.get(0), dates.get(1));
 		University feup = new University();
@@ -104,7 +236,7 @@ public class Interface
 		 */
 	}
 
-	public static void main(String[] args) throws IOException // java Interface  <subjectsNameFile> // <timeIntervalFile>
+	public static void main(String[] args) throws IOException
 	{
 		if (args.length != 2)
 		{
