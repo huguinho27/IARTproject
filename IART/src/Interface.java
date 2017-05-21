@@ -14,6 +14,7 @@ public class Interface
 	private String subjectsFileName, timeIntervalFile;
 	ArrayList<Calendar> dates;
 	ArrayList<Course> courses;
+	private Chromosome lastResult = new Chromosome();
 
 	public Interface(String subjectsFileName, String timeIntervalFile) throws NumberFormatException, IOException
 	{
@@ -111,7 +112,7 @@ public class Interface
 		while (true)
 		{
 			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
-			System.out.println("Please insert the ID of the student you want to show schedule (0 to back to Main Menu)");
+			System.out.println("Please insert the ID of the student you want to show schedule (0  to back to Main Menu)");
 			System.out.println(">> ");
 
 			String line = console.readLine();
@@ -130,38 +131,43 @@ public class Interface
 				break;
 		}
 		
-		//TODO: showStudent(studentId);
+		if (this.lastResult.getFitness() == 0){
+			System.out.println("First run the algoruthm!");
+		}
+		else {
+			this.lastResult.scheduleForStudent(studentId);
+		}
 	}
 
 	public void runAlgorithmMenu(int compare) throws IOException
 	{
-		//if (compare == 3)
-			//TODO: COMPARE
-		int elitistOrProb = 0, initialPopSize = 0, mutationBit = 0;
+		int elitistOrProb = 0, initialPopSize = 0, mutationBit = 0, numIt = 0;
 		Console console = System.console();
 
-		while (true)
-		{
-			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
-			System.out.println("How do you want to run algorithm");
-			System.out.println("1. Elitist solution");
-			System.out.println("2. Elitist + Probabilistic Solutions");
-			System.out.println("0 - Back to Main Menu");
-
-			String line = console.readLine();
-			elitistOrProb = Integer.parseInt(line);
-
-			switch (elitistOrProb)
+		if (compare != 3){
+			while (true)
 			{
-			case 0:
-			{
-				MainMenu();
-				break;
+				System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
+				System.out.println("How do you want to run algorithm");
+				System.out.println("1. Elitist solution");
+				System.out.println("2. Elitist + Probabilistic Solutions");
+				System.out.println("0 - Back to Main Menu");
+
+				String line = console.readLine();
+				elitistOrProb = Integer.parseInt(line);
+
+				switch (elitistOrProb)
+				{
+				case 0:
+				{
+					MainMenu();
+					break;
+				}
+				}
+				System.out.println("elitistOrProb : " + elitistOrProb);
+				if (elitistOrProb == 1 || elitistOrProb == 2)
+					break;
 			}
-			}
-			System.out.println("elitistOrProb : " + elitistOrProb);
-			if (elitistOrProb == 1 || elitistOrProb == 2)
-				break;
 		}
 		
 		while (true)
@@ -189,6 +195,28 @@ public class Interface
 		while (true)
 		{
 			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
+			System.out.println("What should be the number of iterations (0 to back to Main Menu)");
+			System.out.println(">> ");
+
+			String line = console.readLine();
+			numIt = Integer.parseInt(line);
+
+			switch (initialPopSize)
+			{
+			case 0:
+			{
+				MainMenu();
+				break;
+			}
+			}
+			
+			if (numIt > 0)
+				break;
+		}
+		
+		while (true)
+		{
+			System.out.println("GENETIC ALGORITHM - EXAM SCHEDULE");
 			System.out.println("What should be the bit to mutate? (0 to back to Main Menu)");
 			System.out.println(">> ");
 
@@ -207,33 +235,56 @@ public class Interface
 			if (mutationBit != 0)
 				break;
 		}
-		
-		runGA(elitistOrProb, initialPopSize, mutationBit);
-		//statistics...
+
+		if (compare == 1){
+			runGA(elitistOrProb, initialPopSize, mutationBit, numIt);
+		}
+		else if (compare == 3){
+			compare(initialPopSize, mutationBit, numIt);
+		}
 	}
 
-	public void runGA(int elitisOrProb, int initPopSize, int mutationBit)
+	public void runGA(int elitisOrProb, int initPopSize, int mutationBit, int numIt)
 	{
+		System.out.println(dates.get(0).getTime() + "\n" + dates.get(1).getTime());
 		EpocaNormal epn = new EpocaNormal(dates.get(0), dates.get(1));
+		
+		//System.out.println("Start: " + epn.getWorkDays().get(0).getTime() + "\nEnd:   " + epn.getEnd().getTime());
 		University feup = new University();
 		feup.setEpNormal(epn);
-
 		for (int i = 0; i < courses.size(); i++)
 			feup.newCourse(courses.get(i).getName(), courses.get(i).getYear());
-
 		feup.SetEpocaNormalSubjects(courses);
-
-		// Chromosome run(EpocaNormal epn, int populationSize, int mutationBit,
-		// int numIterations)
 		GeneticAlgorithm ga = new GeneticAlgorithm();
-		// Chromosome result = ga.runProbabilistic(epn, 4, 8, 2);
-		Chromosome result = ga.runElite(epn, 50, 8, 100);
+		Chromosome result = new Chromosome();
+		if (elitisOrProb == 1){
+			result = ga.runElite(epn, initPopSize, mutationBit, numIt);
+		}
+		else if (elitisOrProb == 2){
+			result = ga.runProbabilistic(epn, initPopSize, mutationBit, numIt);
+		}
+		lastResult = (Chromosome) result.clone();
 		result.printChromosome();
-
-		/*
-		 * Chromosome cr = new Chromosome(); cr.setEpNormal(epn);
-		 * cr.fillChromosomeWithRandomGenes(); cr.printChromosome();
-		 */
+		ga.printStatistics();
+	}
+	
+	public void compare(int initialPopSize, int mutationBit, int numIt){
+		EpocaNormal epn = new EpocaNormal(dates.get(0), dates.get(1));
+		System.out.println("Start: " + epn.getWorkDays().get(0).getTime() + "\nEnd:   " + epn.getEnd().getTime());
+		University feup = new University();
+		feup.setEpNormal(epn);
+		for (int i = 0; i < courses.size(); i++)
+			feup.newCourse(courses.get(i).getName(), courses.get(i).getYear());
+		feup.SetEpocaNormalSubjects(courses);
+		GeneticAlgorithm gaE = new GeneticAlgorithm();
+		GeneticAlgorithm gaP = new GeneticAlgorithm();
+		Chromosome resultE = new Chromosome();
+		Chromosome resultP = new Chromosome();
+		resultP = gaP.runProbabilistic(epn, initialPopSize, mutationBit, numIt);
+		resultE = gaE.runElite(epn, initialPopSize, mutationBit, numIt);
+		lastResult = (Chromosome) resultE.clone();
+		resultP.printCompare(resultE);
+		gaP.printStatComp(gaE);
 	}
 
 	public static void main(String[] args) throws IOException

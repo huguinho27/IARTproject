@@ -14,7 +14,7 @@ public class EpocaNormal
 		workDays = new ArrayList<Calendar>();
 		subjects = new ArrayList<Course>();
 		studentsToExam = new ArrayList<Student>();
-		this.start = start;
+		this.start = (Calendar) start.clone();
 		this.end = end;
 
 		while (!this.start.equals(this.end))
